@@ -118,7 +118,7 @@ void DataDictionary::validate( const Message& message,
                                const DataDictionary* const pSessionDD,
                                const DataDictionary* const pAppDD )
 throw( FIX::Exception )
-{  
+{
   const Header& header = message.getHeader();
   const BeginString& beginString = FIELD_GET_REF( header, BeginString );
   const MsgType& msgType = FIELD_GET_REF( header, MsgType );
@@ -131,7 +131,7 @@ throw( FIX::Exception )
   }
 
   int field = 0;
-  if( (pSessionDD !=0 && pSessionDD->m_checkFieldsOutOfOrder) || 
+  if( (pSessionDD !=0 && pSessionDD->m_checkFieldsOutOfOrder) ||
       (pAppDD != 0 && pAppDD->m_checkFieldsOutOfOrder) )
   {
     if ( !message.hasValidStructure(field) )
@@ -309,6 +309,15 @@ throw( ConfigError )
         attrs->get("required", required);
         addHeaderField(lookupXMLFieldNumber(pDoc.get(), name), required == "true");
       }
+      else if(pHeaderFieldNode->getName() == "component")
+      {
+        DOMAttributesPtr attrs = pHeaderFieldNode->getAttributes();
+        std::string required;
+        attrs->get("required", required);
+        bool isRequired = (required == "Y" || required == "y");
+        addXMLComponentFields(pDoc.get(), pHeaderFieldNode.get(),
+                              "_header_", *this, isRequired);
+      }
       if(pHeaderFieldNode->getName() == "group")
       {
         DOMAttributesPtr attrs = pHeaderFieldNode->getAttributes();
@@ -343,6 +352,15 @@ throw( ConfigError )
         std::string required = "false";
         attrs->get("required", required);
         addTrailerField(lookupXMLFieldNumber(pDoc.get(), name), required == "true");
+      }
+      else if(pTrailerFieldNode->getName() == "component")
+      {
+        DOMAttributesPtr attrs = pTrailerFieldNode->getAttributes();
+        std::string required;
+        attrs->get("required", required);
+        bool isRequired = (required == "Y" || required == "y");
+        addXMLComponentFields(pDoc.get(), pTrailerFieldNode.get(),
+                              "_trailer_", *this, isRequired);
       }
       if(pTrailerFieldNode->getName() == "group")
       {

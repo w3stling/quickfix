@@ -240,6 +240,21 @@ TEST(setStringWithHeaderGroup)
   CHECK_EQUAL( str, object.toString() );
 }
 
+TEST(setStringWithHeaderGroupDefinedInComponent)
+{
+  FIX::Message object;
+  DataDictionary dataDictionary( "../spec/FIX44.xml" );
+  static const char* str =
+    "8=FIX.4.4\0019=152\00135=A\00134=125\00149=BUYSIDE\001"
+    "52=20040916-16:19:18.328\00156=SELLSIDE\001"
+    "627=2\001628=HOP1\001629=20040916-16:19:18.328\001630=ID1\001"
+    "628=HOP2\001629=20040916-16:19:18.328\001630=ID2\001"
+    "10=080\001";
+
+  object.setString( str, true, &dataDictionary );
+  CHECK_EQUAL( str, object.toString() );
+}
+
 TEST(setStringWithHighBit)
 {
   FIX::Message object;
@@ -1024,7 +1039,7 @@ TEST(newOrderListSetString)
   FIX42::NewOrderList object;
 
   DataDictionary dataDictionary( "../spec/FIX42.xml" );
-  
+
   object.setString
     ( "8=FIX.4.2\0019=95\00135=E\00166=1\00168=3\00173=3\001"
       "11=A\00154=1\00155=DELL\00167=1\001"
@@ -1152,7 +1167,7 @@ TEST(newOrderCrossGetString)
   noPartyIDs.set( FIX::PartyID("PARTY2") );
   noPartyIDs.set( FIX::PartyIDSource(FIX::PartyIDSource_PROPRIETARY) );
   noPartyIDs.set( FIX::PartyRole(FIX::PartyRole_CLIENT_ID) );
-  
+
   noSides.addGroup( noPartyIDs );
 
   noSides.set( FIX::OrderQty(100) );

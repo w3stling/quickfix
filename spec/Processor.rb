@@ -19,7 +19,7 @@ class Processor
     @fieldsT = @docT.elements["fix/fields"]
     @components = @doc.elements["fix/components"]
     populateFieldHash()
-    @generators = generators    
+    @generators = generators
   end
 
   def populateFieldHash
@@ -114,12 +114,17 @@ class Processor
       generator.headerStart
     }
 
-    @header.elements.each("field") { |element|
-      @generators.each { |generator|
-        generator.field(element.attributes["name"], lookupField(element.attributes["name"])) 
-      }
-    } 
-      
+    @header.elements.each("*") { |element|
+      if(element.name == "field")
+        @generators.each { |generator|
+          generator.field(element.attributes["name"], lookupField(element.attributes["name"]))
+        }
+      end
+      if(element.name == "component")
+        component(element)
+      end
+    }
+
     groups(@header)
     @generators.each { |generator|
       generator.headerEnd
@@ -131,12 +136,17 @@ class Processor
       generator.trailerStart
     }
 
-    @trailer.elements.each("field") { |element|
-      @generators.each { |generator|
-        generator.field(element.attributes["name"], lookupField(element.attributes["name"])) 
-      }
+    @trailer.elements.each("*") { |element|
+      if(element.name == "field")
+        @generators.each { |generator|
+          generator.field(element.attributes["name"], lookupField(element.attributes["name"]))
+        }
+      end
+      if(element.name == "component")
+        component(element)
+      end
     }
- 
+
     groups(@trailer)
     @generators.each { |generator|
       generator.trailerEnd
@@ -154,7 +164,7 @@ class Processor
     component = lookupComponent( element.attributes["name"] )
     component.elements.each("field") { |field|
       @generators.each { |generator|
-        generator.field(field.attributes["name"], lookupField(field.attributes["name"])) 
+        generator.field(field.attributes["name"], lookupField(field.attributes["name"]))
       }
     }
     groups( lookupComponent(element.attributes["name"]) )
@@ -166,7 +176,7 @@ class Processor
       number = lookupField(name);
 
       element = group.elements["*"]
-      
+
       delim = nil
       order = Array.new
       group.elements.each("*") { |element|
@@ -181,7 +191,7 @@ class Processor
             if(componentElement.name == "field" || componentElement.name == "group")
 	      field = lookupField(componentElement.attributes["name"])
 	      delim = field if delim == nil
-              order.push(field) 
+              order.push(field)
             end }
 	end
       }
@@ -318,4 +328,3 @@ class Processor
     }
   end
 end
-
