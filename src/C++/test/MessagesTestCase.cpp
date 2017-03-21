@@ -597,7 +597,7 @@ TEST(replaceGroup)
 
 TEST(logonGetString)
 {
-  FIX42::Logon object;
+  Logon object;
 
   EncryptMethod encryptMethod;
   CHECK_THROW( object.get( encryptMethod ), std::logic_error );
@@ -610,7 +610,7 @@ TEST(logonGetString)
 
 TEST(logonSetString)
 {
-  FIX42::Logon object;
+  Logon object;
 
   object.setString
     ( "8=FIX.4.2\0019=12\00135=A\001108=30\00110=026\001" ) ;
